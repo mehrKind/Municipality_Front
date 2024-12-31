@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@font-face {
+    font-family: yekanMed;
+    src: url("./assets/fonts/iranyekanwebmediumfanum.ttf");
+}
+@font-face {
+    font-family: yekanBold;
+    src: url("./assets/fonts/iranyekanwebboldfanum.ttf");
+}
+@font-face {
+    font-family: yekanBlack;
+    src: url("./assets/fonts/iranyekanwebextraboldfanum.ttf");
+}
+
+.yekanBlack{
+    font-family: yekanBlack;
+}
+
+
+.yekanBold{
+    font-family: yekanBold;
+}
