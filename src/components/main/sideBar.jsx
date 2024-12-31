@@ -7,16 +7,16 @@ const links = [
         path: "/report/send"
     },
     {
+        name: "گزارش های ارسال شده",
+        path: "/report/all_report"
+    },
+    {
         name: "تصاویر گرفته شده",
         path: "/captured-images"
     },
     {
         name: "تخلفات",
         path: "/violations"
-    },
-    {
-        name: "گزارش های ارسال شده",
-        path: "/submitted-reports"
     },
     {
         name: "ویرایش دریافت کننده", // "Edit Recipient"

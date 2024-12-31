@@ -1,4 +1,4 @@
-import SideBarMain from "./sideBar";
+import SideBarMain from "../main/sideBar";
 import geo from "../../assets/images/GaugeMeter3.png"
 
 const data = [
@@ -32,7 +32,7 @@ const data = [
     },
 ];
 
-const Home = ()=>{
+const AllReports = ()=>{
     return (
         <div className="yekanMed">
             {/* header */}
@@ -73,65 +73,14 @@ const Home = ()=>{
                         <a href="/">صفحه اصلی</a>
                     </div>
 
-
                     {/* baloon information */}
                     <div className="p-3 w-[90%] mx-auto">
+                        <h1 className="text-gray-400 yekanBlack text-right text-[2rem]">گزارشات ارسال شده</h1>
 
-                        <div className="flex items-center justify-center gap-[4rem] mt-5">
-                            <div className="flex flex-col items-center relative">
-                                <img src={geo} className="w-[200px]" />
-                                <div className=" -mt-4 w-[50px] h-[50px] rounded-full z-10 bg-gray-500 border-4 border-gray-400"></div>
-                                <div className="absolute bg-black w-[100px] h-[100px] top-3" style={{clipPath: 'polygon(50% 0%, 40% 100%, 60% 100%)'}}></div>
-                                <p className="mt-2 text-gray-500 text-[20px] yekanBold">گاز بالن</p>
-                            </div>
-                            <div className="flex flex-col items-center relative">
-                                <img src={geo} className="w-[200px]" />
-                                <div className=" -mt-4 w-[50px] h-[50px] rounded-full z-10 bg-gray-500 border-4 border-gray-400"></div>
-                                <div className="absolute bg-black w-[100px] h-[100px] top-3" style={{clipPath: 'polygon(50% 0%, 40% 100%, 60% 100%)'}}></div>
-                                <p className="mt-2 text-gray-500 text-[20px] yekanBold">سرعت باد</p>
-                            </div>
-                        </div>
+                        <h3 className="text-[2.5rem] text-gray-600 yekanBlack mt-10 text-center">شما تا اکنون <span>3</span> گزارش ارسال کرده اید</h3>
 
 
-                        <h2 className="yekanBlack text-[1.7rem] text-gray-500/90 text-right">
-                            اطلاعات دریافتی از بالن
-                        </h2>
-
-                        <div className="bg-white rounded-lg p-4 flex flex-wrap items-center justify-between shadow-md mt-4 flex-row-reverse">
-                            <div className="flex flex-col items-center p-4 w-full sm:w-1/5">
-                                <p className="yekanBlack text-[1.3rem] text-gray-500">موقعیت فعلی</p>
-                                <p className="text-gray-500 mt-4">10.20.30 شمال</p>
-                            </div>
-                            {/* <div className="separator"></div> Separator */}
-                            <div className="flex flex-col items-center p-4 w-full sm:w-1/5 md:border-x-2 border-dotted border-gray-400">
-                                <p className="yekanBlack text-[1.3rem] text-gray-500">سرعت باد</p>
-                                <p className="text-gray-500 mt-4">20 Km/h</p>
-                            </div>
-                            {/* <div className="separator"></div> Separator */}
-                            <div className="flex flex-col items-center p-4 w-full sm:w-1/5">
-                                <p className="yekanBlack text-[1.3rem] text-gray-500">زاویه دوربین</p>
-                                <p className="text-gray-500 mt-4">45 درجه</p>
-                            </div>
-                            {/* <div className="separator"></div> Separator */}
-                            <div className="flex flex-col items-center p-4 w-full sm:w-1/5 md:border-x-2 border-dotted border-gray-400">
-                                <p className="yekanBlack text-[1.3rem] text-gray-500">گاز بالن</p>
-                                <p className="text-gray-500 mt-4">10 L</p>
-                            </div>
-                            
-                            <div className="flex flex-col items-center p-4 w-full sm:w-1/5">
-                                <p className="yekanBlack text-[1.3rem] text-gray-500">ساعت</p>
-                                <p className="text-gray-500 mt-4">10:30</p>
-                            </div>
-                        </div>
-
-                        <div className="flex max-md:flex-col-reverse justify-between mx-2 items-center mt-[4rem]">
-                            <a href="#" className="text-blue-500 underline text-[17px] yekanMed">مشاهده همه</a>
-                            <h2 className="yekanBlack text-[1.7rem] text-gray-500/90 text-right">
-                                تخلفات در صف تایید  <span className="text-blue-500 underline text-[15px] yekanMed">(20 عدد)</span>
-                            </h2>
-
-                        </div>
-                        <div className="overflow-x-auto mt-3">
+                        <div className="overflow-x-auto mt-10">
                             <table className="min-w-full bg-white border border-gray-300 rounded-lg">
                                 <thead className="rounded-lg">
                                     <tr className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
@@ -159,7 +108,6 @@ const Home = ()=>{
                                 </tbody>
                             </table>
                         </div>
-
                     </div>
                 </div>
                 <SideBarMain />
@@ -172,4 +120,4 @@ const Home = ()=>{
 }
 
 
-export default Home;
+export default AllReports;

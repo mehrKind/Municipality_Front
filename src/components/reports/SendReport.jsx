@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import profile from "../../assets/images/profile.jpg";
 import gray from "../../assets/images/gray.jpg";
 import api from "../conf/appUtils";
+import "../../assets/css/report.css"
 
 const SendReport = () => {
     const [currentStep, setCurrentStep] = useState(1);
@@ -44,11 +45,10 @@ const SendReport = () => {
                     if (response.data?.image_url) {
                         setImageUrl(`http://127.0.0.1:8000${response.data.image_url}`);
                     } else {
-                        alert("Processing failed. No image returned.");
+                        alert("هیچ عکسی پردازش نشده");
                     }
                 } catch (error) {
-                    console.error("Error during image processing:", error);
-                    alert("An error occurred while processing the image.");
+                    alert("مشکلی در پردازش تصویر وجود دارد");
                 } finally {
                     setIsProcessing(false); // Hide the loader
                 }
@@ -102,16 +102,23 @@ const SendReport = () => {
         // ! step 1
         (
             <div className="w-[90%] mx-auto md:grid md:grid-cols-12">
+            {isProcessing ? (
+                <div className="flex justify-center items-center absolute w-[100vw] h-[100vh] bg-gray-100/70 top-0 right-0 left-0 bottom-0">
+                    <div className="loader"></div>
+                    <p className="mt-4 yekanBold text-center text-[18px] mx-3">در حال پردازش تصویر...</p>
+                </div>
+            ) : (
+                <React.Fragment>
                 {/* image */}
                 <div className="md:col-span-5">
                     <p className="text-right mb-4">تصویر گرفته شده</p>
                     <img src={uploadedImage || gray} alt="image" className="w-full" />
                     <button
-                        onClick={handleNextStep}
-                        className="bg-blue-500 cursor-pointer text-white py-3 rounded-lg mt-5 hover:bg-blue-400 transition duration-200 w-full yekanBlack text-[1.3rem]"
-                        disabled={!isFormValid()} // Disable if the form is not valid
+                    onClick={handleNextStep}
+                    className="bg-blue-500 cursor-pointer text-white py-3 rounded-lg mt-5 hover:bg-blue-400 transition duration-200 w-full yekanBlack text-[1.3rem]"
+                    disabled={!isFormValid()} // Disable if the form is not valid
                     >
-                        مرحله بعد
+                    ثبت و ادامه
                     </button>
                 </div>
 
@@ -119,79 +126,81 @@ const SendReport = () => {
                 <div className="md:col-span-7 text-right">
                     <h1 className="text-[3rem] yekanBlack mb-4">ارسال گزارش</h1>
                     <div className="flex flex-col gap-4" style={{ direction: "rtl" }}>
-                        <div className="flex items-center gap-5">
-                            <label className="text-[1.3rem]">مختصات جغرافیایی زمین</label>
-                            <input
-                                type="text"
-                                className="p-4 bg-gray-100 w-[30%] mb-5 rounded-lg focus:outline-none"
-                                placeholder="مثال: 35.6892, 51.3890"
-                                name="location"
-                                value={formData.location}
-                                onChange={handleInputChange}
-                            />
-                        </div>
-                        <div className="flex items-center gap-5">
-                            <label className="text-[1.3rem]">سرعت باد</label>
-                            <input
-                                type="number"
-                                className="p-4 bg-gray-100 w-[30%] mb-5 rounded-lg focus:outline-none"
-                                placeholder="مثال: 10"
-                                name="wind_speed"
-                                value={formData.wind_speed}
-                                onChange={handleInputChange}
-                            />
-                        </div>
-                        <div className="flex items-center gap-5">
-                            <label className="text-[1.3rem]">زاویه دوربین</label>
-                            <input
-                                type="number"
-                                className="p-4 bg-gray-100 w-[30%] mb-5 rounded-lg focus:outline-none"
-                                placeholder="مثال: 45"
-                                name="camera"
-                                value={formData.camera}
-                                onChange={handleInputChange}
-                            />
-                        </div>
+                    <div className="flex items-center gap-5">
+                        <label className="text-[1.3rem]">مختصات جغرافیایی زمین</label>
+                        <input
+                        type="text"
+                        className="p-4 bg-gray-100 w-[30%] mb-5 rounded-lg focus:outline-none"
+                        placeholder="مثال: 35.6892, 51.3890"
+                        name="location"
+                        value={formData.location}
+                        onChange={handleInputChange}
+                        />
                     </div>
-
+                    <div className="flex items-center gap-5">
+                        <label className="text-[1.3rem]">سرعت باد</label>
+                        <input
+                        type="number"
+                        className="p-4 bg-gray-100 w-[30%] mb-5 rounded-lg focus:outline-none"
+                        placeholder="مثال: 10"
+                        name="wind_speed"
+                        value={formData.wind_speed}
+                        onChange={handleInputChange}
+                        />
+                    </div>
+                    <div className="flex items-center gap-5">
+                        <label className="text-[1.3rem]">زاویه دوربین</label>
+                        <input
+                        type="number"
+                        className="p-4 bg-gray-100 w-[30%] mb-5 rounded-lg focus:outline-none"
+                        placeholder="مثال: 45"
+                        name="camera"
+                        value={formData.camera}
+                        onChange={handleInputChange}
+                        />
+                    </div>
+                    </div>
 
                     <hr className="my-5 w-[90%] mx-auto border-gray-700 border-dotted" />
 
                     <div className="w-[90%] mx-auto">
-                        <p className="mb-3 text-[15px]">پیوست تصویر بدون پردازش</p>
+                    <p className="mb-3 text-[15px]">پیوست تصویر بدون پردازش</p>
+                    <input
+                        type="file"
+                        className="p-4 bg-gray-100 w-full mb-5 rounded-lg border-0 outline-none"
+                        onChange={handleImageUpload} // Handle image upload
+                    />
+                    <p className="mb-3 text-[15px]">زمان ثبت تصویر</p>
+                    <div className="relative">
                         <input
-                            type="file"
-                            className="p-4 bg-gray-100 w-full mb-5 rounded-lg border-0 outline-none"
-                            onChange={handleImageUpload} // Handle image upload
+                        type="date"
+                        className="p-4 bg-gray-100 w-full mb-5 rounded-lg border-0 outline-none"
+                        name="date"
+                        value={formData.date}
+                        onChange={handleInputChange} // Handle date input change
                         />
-                        <p className="mb-3 text-[15px]">زمان ثبت تصویر</p>
-                        <div className="relative">
-                            <input
-                                type="date"
-                                className="p-4 bg-gray-100 w-full mb-5 rounded-lg border-0 outline-none"
-                                name="date"
-                                value={formData.date}
-                                onChange={handleInputChange} // Handle date input change
-                            />
-                            <button
-                                onClick={handleTodayDate}
-                                className="bg-blue-200 text-blue-900 py-4 px-4 rounded-lg absolute right-0"
-                            >
-                                تاریخ امروز
-                            </button>
-                        </div>
-                        <p className="mb-3 text-[15px]">عنوان تخلف</p>
-                        <input
-                            type="text"
-                            className="p-4 bg-gray-100 w-full mb-5 rounded-lg border-0 outline-none"
-                            name="title"
-                            value={formData.title}
-                            onChange={handleInputChange} // Handle title input change
-                            style={{ direction: "rtl" }}
-                        />
+                        <button
+                        onClick={handleTodayDate}
+                        className="bg-blue-200 text-blue-900 py-4 px-4 rounded-lg absolute right-0"
+                        >
+                        تاریخ امروز
+                        </button>
+                    </div>
+                    <p className="mb-3 text-[15px]">عنوان تخلف</p>
+                    <input
+                        type="text"
+                        className="p-4 bg-gray-100 w-full mb-5 rounded-lg border-0 outline-none"
+                        name="title"
+                        value={formData.title}
+                        onChange={handleInputChange} // Handle title input change
+                        style={{ direction: "rtl" }}
+                    />
                     </div>
                 </div>
+                </React.Fragment>
+            )}
             </div>
+
         ),
         //! step 2
         (
