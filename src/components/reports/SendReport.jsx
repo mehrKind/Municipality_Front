@@ -26,16 +26,21 @@ const SendReport = () => {
                 setIsProcessing(true); // Show the loader while processing
                 try {
                     const form = new FormData();
-                    form.append("img_input", formData.image); // Append the uploaded image
-
+                    form.append("img_input", formData.image);
+                    form.append("title", formData.title);
+                    form.append("location", formData.location);
+                    form.append("wind_speed", formData.wind_speed);
+                    form.append("camera", formData.camera);
+                    form.append("date", formData.date);
+                    form.append("content", formData.content || "");
+    
                     // Call the API
                     const response = await api.post("main/proccess/", form, {
                         headers: {
                             "Content-Type": "multipart/form-data",
                         },
-                    });                   
-
-                    
+                    });
+    
                     if (response.data?.image_url) {
                         setImageUrl(`http://127.0.0.1:8000${response.data.image_url}`);
                     } else {
@@ -53,6 +58,8 @@ const SendReport = () => {
             setCurrentStep(currentStep + 1);
         }
     };
+
+
 
     const handleImageUpload = (e) => {
         const file = e.target.files[0];
@@ -101,7 +108,7 @@ const SendReport = () => {
                     <img src={uploadedImage || gray} alt="image" className="w-full" />
                     <button
                         onClick={handleNextStep}
-                        className="bg-blue-500 text-white py-3 rounded-lg mt-5 hover:bg-blue-400 transition duration-200 w-full yekanBlack text-[1.3rem]"
+                        className="bg-blue-500 cursor-pointer text-white py-3 rounded-lg mt-5 hover:bg-blue-400 transition duration-200 w-full yekanBlack text-[1.3rem]"
                         disabled={!isFormValid()} // Disable if the form is not valid
                     >
                         مرحله بعد
@@ -111,9 +118,42 @@ const SendReport = () => {
                 {/* content and form */}
                 <div className="md:col-span-7 text-right">
                     <h1 className="text-[3rem] yekanBlack mb-4">ارسال گزارش</h1>
-                    <p className="text-[1.3rem]">مختصات جغرافیایی زمین </p>
-                    <p className="text-[1.3rem] my-4">سرعت باد</p>
-                    <p className="text-[1.3rem]">زاویه دوربین</p>
+                    <div className="flex flex-col gap-4" style={{ direction: "rtl" }}>
+                        <div className="flex items-center gap-5">
+                            <label className="text-[1.3rem]">مختصات جغرافیایی زمین</label>
+                            <input
+                                type="text"
+                                className="p-4 bg-gray-100 w-[30%] mb-5 rounded-lg focus:outline-none"
+                                placeholder="مثال: 35.6892, 51.3890"
+                                name="location"
+                                value={formData.location}
+                                onChange={handleInputChange}
+                            />
+                        </div>
+                        <div className="flex items-center gap-5">
+                            <label className="text-[1.3rem]">سرعت باد</label>
+                            <input
+                                type="number"
+                                className="p-4 bg-gray-100 w-[30%] mb-5 rounded-lg focus:outline-none"
+                                placeholder="مثال: 10"
+                                name="wind_speed"
+                                value={formData.wind_speed}
+                                onChange={handleInputChange}
+                            />
+                        </div>
+                        <div className="flex items-center gap-5">
+                            <label className="text-[1.3rem]">زاویه دوربین</label>
+                            <input
+                                type="number"
+                                className="p-4 bg-gray-100 w-[30%] mb-5 rounded-lg focus:outline-none"
+                                placeholder="مثال: 45"
+                                name="camera"
+                                value={formData.camera}
+                                onChange={handleInputChange}
+                            />
+                        </div>
+                    </div>
+
 
                     <hr className="my-5 w-[90%] mx-auto border-gray-700 border-dotted" />
 
