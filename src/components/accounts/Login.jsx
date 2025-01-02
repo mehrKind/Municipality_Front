@@ -7,25 +7,24 @@ import api from "../conf/appUtils";
 const Login = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [securityCode, setSecurityCode] = useState("");
-    const [inputSecurityCode, setInputSecurityCode] = useState("");
+    const [error, setError] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
 
     const navigate = useNavigate();
-
-    useEffect(() => {
-        // Generate a random security code when the component mounts
-        const randomCode = Math.floor(1000 + Math.random() * 9000);
-        setSecurityCode(randomCode);
-    }, []);
 
     const handleLogin = async (e) => {
         e.preventDefault();
 
-        // Check if the security code matches
-        if (inputSecurityCode !== securityCode.toString()) {
-            alert("کد امنیتی اشتباه است!");
+        // Clear any existing error message
+        setError("");
+
+        // Validate form fields
+        if (!username.trim() || !password.trim()) {
+            setError("لطفاً نام کاربری و رمز عبور را وارد کنید.");
             return;
         }
+
+        setIsLoading(true);
 
         try {
             const response = await api.post("accounts/login/", {
@@ -42,8 +41,10 @@ const Login = () => {
                 navigate("/");
             }
         } catch (error) {
-            alert("نام کاربری یا رمز عبور اشتباه است!");
+            setError("نام کاربری یا رمز عبور اشتباه است!");
             console.error("Login error:", error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -67,6 +68,10 @@ const Login = () => {
                             onSubmit={handleLogin}
                             className="loginForm text-right mt-[5rem] w-[80%] mx-auto"
                         >
+                            {error && (
+                                <p className="text-red-500 text-center mb-4">{error}</p>
+                            )}
+
                             <p className="mb-2 text-gray-600">نام کاربری</p>
                             <input
                                 type="text"
@@ -83,27 +88,16 @@ const Login = () => {
                                 className="bg-gray-100 text-center outline-none border-b-2 border-transparent p-2 w-full rounded-lg focus:border-blue-500 transition duration-200 focus:bg-gray-50/90"
                             />
 
-                            <p className="mt-7 mb-3 text-gray-600">کد امنیتی</p>
-                            <div className="securityInput flex items-center gap-5">
-                                <input
-                                    type="text"
-                                    value={inputSecurityCode}
-                                    onChange={(e) => setInputSecurityCode(e.target.value)}
-                                    className="bg-gray-100 outline-none border-b-2 border-transparent p-2 rounded-lg w-[50%] text-center"
-                                />
-                                <input
-                                    type="text"
-                                    disabled
-                                    value={securityCode}
-                                    className="bg-gray-100 outline-none border-b-2 border-transparent w-[50%] p-2 rounded-lg focus:border-blue-500 transition duration-200 focus:bg-gray-50/90 text-gray-700 yekanBlack text-center cursor-not-allowed"
-                                />
-                            </div>
-
                             <button
                                 type="submit"
                                 className="bg-blue-500 w-full p-3 yekanBlack rounded-lg text-white my-[2rem] hover:bg-blue-400 duration-200 transition-all"
+                                disabled={isLoading}
                             >
-                                ورود
+                                {isLoading ? (
+                                    <span className="loader border-2 border-t-2 border-white rounded-full w-4 h-4 inline-block animate-spin"></span>
+                                ) : (
+                                    "ورود"
+                                )}
                             </button>
                         </form>
                         <div className="text-left ml-[3.5rem]">
@@ -113,7 +107,7 @@ const Login = () => {
                         </div>
                     </div>
                     <div className="imageLogin md:col-span-7 max-md:hidden">
-                        <img src={hafez} className="wi-full rounded-lg" alt="Hafez" />
+                        <img src={hafez} className="w-full rounded-lg" alt="Hafez" />
                     </div>
                 </div>
             </div>

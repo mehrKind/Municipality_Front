@@ -34,11 +34,13 @@ const SendReport = () => {
                     form.append("camera", formData.camera);
                     form.append("date", formData.date);
                     form.append("content", formData.content || "");
+                    const token = localStorage.getItem("accessToken");
     
                     // Call the API
                     const response = await api.post("main/proccess/", form, {
                         headers: {
                             "Content-Type": "multipart/form-data",
+                            "Authorization": `Bearer ${token}`
                         },
                     });
     
