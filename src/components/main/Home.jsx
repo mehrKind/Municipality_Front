@@ -1,5 +1,6 @@
 import SideBarMain from "./sideBar";
 import geo from "../../assets/images/GaugeMeter3.png"
+import { useNavigate  } from 'react-router-dom';
 
 const data = [
     {
@@ -32,7 +33,18 @@ const data = [
     },
 ];
 
+
 const Home = ()=>{
+    const navigate = useNavigate();
+
+    // handle logout
+    const handleLogout = ()=>{
+        localStorage.removeItem("accessToken")
+        localStorage.removeItem("refreshToken")
+        localStorage.removeItem("after_img")
+        localStorage.removeItem("before_img")
+        navigate("/login")
+    }
     return (
         <div className="yekanMed">
             {/* header */}
@@ -40,7 +52,7 @@ const Home = ()=>{
                 <div className="flex items-center justify-between mx-5">
                     {/* right */}
                     <div className="">
-                        <a href="#">خروج</a>
+                        <p className="cursor-pointer" onClick={handleLogout}>خروج</p>
                     </div>
                     {/* left */}
                     <div className="">

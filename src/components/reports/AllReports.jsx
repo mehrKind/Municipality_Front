@@ -136,6 +136,20 @@ const AllReports = () => {
                 // alert("Report deleted successfully.");
                 setDeleteModalVisible(false);
                 setData((prevData) => prevData.filter((item) => item.id !== currentItem.id));
+                Toastify({
+                    text: "با موفقیت حذف شد",
+                    duration: 3000,
+                    // destination: "https://github.com/apvarun/toastify-js",
+                    newWindow: true,
+                    close: true,
+                    gravity: "top", // `top` or `bottom`
+                    position: "center", // `left`, `center` or `right`
+                    stopOnFocus: true, // Prevents dismissing of toast on hover
+                    style: {
+                      background: "#2ab06f",
+                    },
+                    onClick: function(){} // Callback after click
+                  }).showToast();
             }
         } catch (error) {
             console.error("Error deleting report:", error);
@@ -197,10 +211,7 @@ const AllReports = () => {
                         <div className="overflow-x-auto mt-10">
                             {data.length === 0 ? (
                                 <div className="text-center text-gray-600 yekanBold text-[1.5rem] mt-10">
-                                    <p>
-                                    شما هیچ گزارشی ارسال نکرده اید
-                                    </p>
-                                    <a className="text-blue-800 bg-blue-200 px-3 py-1 text-[19px] rounded-lg" href="/report/send">ارسال گزارش</a>
+                                    شما هیچ گزارشی <a href="/report/send" className="text-blue-700 bg">ارسال</a> نکرده اید
                                 </div>
                             ) : (
                                 <div>

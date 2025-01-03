@@ -4,6 +4,8 @@ import gray from "../../assets/images/gray.jpg";
 import api from "../conf/appUtils";
 import "../../assets/css/report.css"
 import { useNavigate  } from 'react-router-dom';
+import Toastify from 'toastify-js'
+import "toastify-js/src/toastify.css"
 
 const SendReport = () => {
     const [currentStep, setCurrentStep] = useState(1);
@@ -30,12 +32,6 @@ const SendReport = () => {
                 try {
                     const form = new FormData();
                     form.append("img_input", formData.image);
-                    form.append("title", formData.title);
-                    form.append("location", formData.location);
-                    form.append("wind_speed", formData.wind_speed);
-                    form.append("camera", formData.camera);
-                    form.append("date", formData.date);
-                    form.append("content", formData.content || "");
                     const token = localStorage.getItem("accessToken");
     
                     // Call the API
@@ -66,7 +62,7 @@ const SendReport = () => {
     };
 
 
-
+    // upload image
     const handleImageUpload = (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -84,11 +80,13 @@ const SendReport = () => {
         setFormData({ ...formData, [name]: value });
     };
 
+    // get today date
     const handleTodayDate = () => {
         const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
         setFormData({ ...formData, date: today });
     };
 
+    // check if the form is valid or not
     const isFormValid = () => {
         if (currentStep === 1) {
             return formData.image && formData.date && formData.title; // All fields must be filled
@@ -96,15 +94,85 @@ const SendReport = () => {
         return true; // For steps 2 and 3, we assume the form is valid
     };
 
+    // print the page
     const handlePrint = () => {
         window.print();
     };
 
+    // cancle app
     const handleCancle = ()=>{
         localStorage.removeItem("before_img")
         localStorage.removeItem("after_img")
         navigate("/");
     }
+    
+    // save report items to database
+    const handleSubmit = async () => {
+        setIsProcessing(true);
+        try {
+            const form = new FormData();
+            const beforeImageFile = formData.image;
+            const afterImgUrl = localStorage.getItem("after_img");
+    
+            if (beforeImageFile) {
+                form.append("img_input", beforeImageFile);
+            }
+            if (afterImgUrl) {
+                form.append("after_img", afterImgUrl); // Append the URL
+            }
+            // Add other fields
+            form.append("title", formData.title);
+            form.append("location", formData.location);
+            form.append("wind_speed", formData.wind_speed);
+            form.append("camera", formData.camera);
+            form.append("date", formData.date);
+            form.append("content", formData.content || "");
+    
+            const token = localStorage.getItem("accessToken");
+    
+            const response = await api.post("main/save_reports/", form, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                    "Authorization": `Bearer ${token}`
+                },
+            });
+            if (response.status === 201){
+                Toastify({
+                    text: "با موفقیت ذخیره شد",
+                    duration: 3000,
+                    // destination: "https://github.com/apvarun/toastify-js",
+                    newWindow: true,
+                    close: true,
+                    gravity: "top", // `top` or `bottom`
+                    position: "center", // `left`, `center` or `right`
+                    stopOnFocus: true, // Prevents dismissing of toast on hover
+                    style: {
+                      background: "#2ab06f",
+                    },
+                    onClick: function(){} // Callback after click
+                  }).showToast();
+                //   navigate to home page
+                navigate("/");
+            }
+        } catch (error) {
+            Toastify({
+                text: "ثبت تصویر با خطا مواجه شد. دوباره تلاش کنید",
+                duration: 3000,
+                // destination: "https://github.com/apvarun/toastify-js",
+                newWindow: true,
+                close: true,
+                gravity: "top", // `top` or `bottom`
+                position: "center", // `left`, `center` or `right`
+                stopOnFocus: true, // Prevents dismissing of toast on hover
+                style: {
+                  background: "#ff3333",
+                },
+              }).showToast();
+        } finally {
+            setIsProcessing(false);
+        }
+    };
+    
 
     const stepContents = [
         // ! step 1
@@ -335,6 +403,8 @@ const SendReport = () => {
                             className="p-4 bg-gray-100 w-full rounded-lg border-0 outline-none"
                             placeholder="توضیحات خود را وارد کنید..."
                             style={{ direction: "rtl" }}
+                            name="content"
+                            onChange={handleInputChange}
                         ></textarea>
                     </div>
 
@@ -346,7 +416,7 @@ const SendReport = () => {
                             چاپ
                         </button>
                         <button
-                            onClick={handlePrint}
+                            onClick={handleSubmit}
                             className="bg-green-500 text-white py-3 px-5 rounded-lg hover:bg-green-400 transition duration-200 yekanBlack text-[1.2rem]"
                         >
                             ثبت
