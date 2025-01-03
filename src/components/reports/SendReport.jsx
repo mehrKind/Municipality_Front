@@ -3,11 +3,13 @@ import profile from "../../assets/images/profile.jpg";
 import gray from "../../assets/images/gray.jpg";
 import api from "../conf/appUtils";
 import "../../assets/css/report.css"
+import { useNavigate  } from 'react-router-dom';
 
 const SendReport = () => {
     const [currentStep, setCurrentStep] = useState(1);
     const [uploadedImage, setUploadedImage] = useState(null); // State to store the uploaded or processed image
     const [imageUrl, setImageUrl] = useState('');
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         image: null,
         date: "",
@@ -46,6 +48,8 @@ const SendReport = () => {
     
                     if (response.data?.image_url) {
                         setImageUrl(`http://127.0.0.1:8000${response.data.image_url}`);
+                        localStorage.setItem("after_img" ,response.data.image_url)
+                        localStorage.setItem("before_img" ,formData.image)
                     } else {
                         alert("هیچ عکسی پردازش نشده");
                     }
@@ -97,7 +101,9 @@ const SendReport = () => {
     };
 
     const handleCancle = ()=>{
-        return
+        localStorage.removeItem("before_img")
+        localStorage.removeItem("after_img")
+        navigate("/");
     }
 
     const stepContents = [
@@ -210,7 +216,7 @@ const SendReport = () => {
                 <h1 className="yekanBlack text-black text-[2.3rem] text-center">پردازش تصویر</h1>
                 <div className="md:w-[90%] md:mx-auto p-2 my-4">
                     {isProcessing ? (
-                        <div className="flex justify-center items-center">
+                        <div className="flex justify-center items-center" style={{direction: "rtl"}}>
                             <div className="loader"></div>
                             <p className="mt-4 yekanBold text-center text-[18px]">در حال پردازش تصویر...</p>
                         </div>
@@ -241,6 +247,18 @@ const SendReport = () => {
                                     <tr>
                                         <td className="border border-gray-300 px-4 py-2">تاریخ</td>
                                         <td className="border border-gray-300 px-4 py-2">{formData.date}</td>
+                                    </tr>
+                                    <tr>
+                                        <td className="border border-gray-300 px-4 py-2">مختصات جغرافیایی</td>
+                                        <td className="border border-gray-300 px-4 py-2">{formData.location}</td>
+                                    </tr>
+                                    <tr>
+                                        <td className="border border-gray-300 px-4 py-2">زاویه دوربین</td>
+                                        <td className="border border-gray-300 px-4 py-2">{formData.camera}</td>
+                                    </tr>
+                                    <tr>
+                                        <td className="border border-gray-300 px-4 py-2">سرعت باد</td>
+                                        <td className="border border-gray-300 px-4 py-2">{formData.wind_speed}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -295,6 +313,18 @@ const SendReport = () => {
                                 <td className="border border-gray-300 px-4 py-2">تاریخ</td>
                                 <td className="border border-gray-300 px-4 py-2">{formData.date}</td>
                             </tr>
+                            <tr>
+                                <td className="border border-gray-300 px-4 py-2">مختصات جغرافیایی</td>
+                                <td className="border border-gray-300 px-4 py-2">{formData.location}</td>
+                            </tr>
+                            <tr>
+                                <td className="border border-gray-300 px-4 py-2">زاویه دوربین</td>
+                                <td className="border border-gray-300 px-4 py-2">{formData.camera}</td>
+                            </tr>
+                            <tr>
+                                <td className="border border-gray-300 px-4 py-2">سرعت باد</td>
+                                <td className="border border-gray-300 px-4 py-2">{formData.wind_speed}</td>
+                            </tr>
                         </tbody>
                     </table>
 
@@ -322,7 +352,7 @@ const SendReport = () => {
                             ثبت
                         </button>
                         <button
-                            onClick={handlePrint}
+                            onClick={handleCancle}
                             className="bg-red-500 text-white py-3 px-5 rounded-lg hover:bg-red-400 transition duration-200 yekanBlack text-[1.2rem]"
                         >
                             لغو
