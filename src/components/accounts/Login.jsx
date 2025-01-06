@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import hafez from "../../assets/images/hafez.png";
 import logo from "../../assets/images/logo.jpg";
 import api from "../conf/appUtils";
+import Toastify from 'toastify-js'
+import "toastify-js/src/toastify.css"
 
 const Login = () => {
     const [username, setUsername] = useState("");
@@ -20,7 +22,19 @@ const Login = () => {
 
         // Validate form fields
         if (!username.trim() || !password.trim()) {
-            setError("لطفاً نام کاربری و رمز عبور را وارد کنید.");
+            Toastify({
+                text: "لطفا نام کاربری و رمز عبور را وارد کنید",
+                duration: 3000,
+                // destination: "https://github.com/apvarun/toastify-js",
+                newWindow: true,
+                close: true,
+                gravity: "top", // `top` or `bottom`
+                position: "center", // `left`, `center` or `right`
+                stopOnFocus: true, // Prevents dismissing of toast on hover
+                style: {
+                  background: "#ff3333",
+                },
+              }).showToast();
             return;
         }
 
@@ -36,13 +50,38 @@ const Login = () => {
                 // Store the tokens in localStorage
                 localStorage.setItem("accessToken", response.data.access);
                 localStorage.setItem("refreshToken", response.data.refresh);
-
+                Toastify({
+                    text: "کاربر عزیز خوش آمدید",
+                    duration: 3000,
+                    // destination: "https://github.com/apvarun/toastify-js",
+                    newWindow: true,
+                    close: true,
+                    gravity: "top", // `top` or `bottom`
+                    position: "center", // `left`, `center` or `right`
+                    stopOnFocus: true, // Prevents dismissing of toast on hover
+                    style: {
+                      background: "#2ab06f",
+                    },
+                    onClick: function(){} // Callback after click
+                  }).showToast();
                 // Redirect to the main page
                 navigate("/");
             }
         } catch (error) {
-            setError("نام کاربری یا رمز عبور اشتباه است!");
-            console.error("Login error:", error);
+            Toastify({
+                text: "نام کاربری یا رمز عبور اشتباه هست",
+                // text: `${error}`,
+                duration: 3000,
+                // destination: "https://github.com/apvarun/toastify-js",
+                newWindow: true,
+                close: true,
+                gravity: "top", // `top` or `bottom`
+                position: "center", // `left`, `center` or `right`
+                stopOnFocus: true, // Prevents dismissing of toast on hover
+                style: {
+                  background: "#ff3333",
+                },
+              }).showToast();
         } finally {
             setIsLoading(false);
         }
@@ -68,9 +107,9 @@ const Login = () => {
                             onSubmit={handleLogin}
                             className="loginForm text-right mt-[5rem] w-[80%] mx-auto"
                         >
-                            {error && (
+                            {/* {error && (
                                 <p className="text-red-500 text-center mb-4">{error}</p>
-                            )}
+                            )} */}
 
                             <p className="mb-2 text-gray-600">نام کاربری</p>
                             <input
@@ -94,7 +133,10 @@ const Login = () => {
                                 disabled={isLoading}
                             >
                                 {isLoading ? (
-                                    <span className="loader border-2 border-t-2 border-white rounded-full w-4 h-4 inline-block animate-spin"></span>
+                                    <div className="flex items-center gap-3 text-center justify-center py-2" style={{direction: "rtl"}}>
+                                        <span class="loader"></span>
+                                        {/* <p>درحال ورود</p> */}
+                                    </div>                                    
                                 ) : (
                                     "ورود"
                                 )}

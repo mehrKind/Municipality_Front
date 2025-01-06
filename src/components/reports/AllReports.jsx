@@ -3,6 +3,7 @@ import SideBarMain from "../main/sideBar";
 import api from "../conf/appUtils";
 import { MdModeEdit } from "react-icons/md";
 import { MdDeleteForever } from "react-icons/md";
+import { useNavigate  } from 'react-router-dom';
 import Toastify from 'toastify-js'
 import "toastify-js/src/toastify.css"
 
@@ -14,8 +15,18 @@ const AllReports = () => {
     const [editModalVisible, setEditModalVisible] = useState(false);
     const [deleteModalVisible, setDeleteModalVisible] = useState(false);
     const [currentItem, setCurrentItem] = useState(null);
+    const navigate = useNavigate();
+
 
     const baseUrl = "http://127.0.0.1:8000/"; // Base URL for image paths
+
+    const handleLogout = ()=>{
+        localStorage.removeItem("accessToken")
+        localStorage.removeItem("refreshToken")
+        localStorage.removeItem("after_img")
+        localStorage.removeItem("before_img")
+        navigate("/login")
+    }
 
     useEffect(() => {
         // Fetch data from the API
@@ -37,7 +48,19 @@ const AllReports = () => {
                 setLoading(false);
             } catch (err) {
                 console.error("Error fetching data:", err);
-                setError("Failed to fetch data.");
+            Toastify({
+                text: "500 خطای سرور",
+                duration: 3000,
+                // destination: "https://github.com/apvarun/toastify-js",
+                newWindow: true,
+                close: true,
+                gravity: "top", // `top` or `bottom`
+                position: "center", // `left`, `center` or `right`
+                stopOnFocus: true, // Prevents dismissing of toast on hover
+                style: {
+                  background: "#ff3333",
+                },
+              }).showToast();
                 setLoading(false);
             }
         };
@@ -176,7 +199,7 @@ const AllReports = () => {
                 <div className="flex items-center justify-between mx-5">
                     {/* right */}
                     <div className="">
-                        <a href="#">خروج</a>
+                        <p onClick={handleLogout} className="cursor-pointer">خروج</p>
                     </div>
                     {/* left */}
                     <div className="">
@@ -215,13 +238,13 @@ const AllReports = () => {
                                 </div>
                             ) : (
                                 <div>
-                                    <h3 className="text-[2.5rem] text-gray-600 yekanBlack my-10 text-center">
-                                        شما تا اکنون <span>{data.length}</span> گزارش ارسال کرده اید
+                                    <h3 className="md:text-[2.5rem] text-[1.5rem] text-gray-600 yekanBlack my-10 text-center">
+                                        شما تا اکنون <span className="text-blue-500">{data.length}</span> گزارش ارسال کرده اید
                                     </h3>
                                     <table className="min-w-full bg-white border border-gray-300 rounded-lg">
                                         <thead className="rounded-lg">
                                             <tr className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-                                                <th className="py-3 px-6 text-center yekanBold text-[1.2rem] text-gray-600">وضعیت</th>
+                                                <th className="py-3 px-6 text-center yekanBold text-[1.2rem] text-gray-600">ویرایش / حذف</th>
                                                 <th className="py-3 px-6 text-center yekanBold text-[1.2rem] text-gray-600">عکس قبل/بعد</th>
                                                 <th className="py-3 px-6 text-center yekanBold text-[1.2rem] text-gray-600">زاویه دوربین</th>
                                                 <th className="py-3 px-6 text-center yekanBold text-[1.2rem] text-gray-600">موقعیت زمین</th>
@@ -357,7 +380,7 @@ const AllReports = () => {
                                     className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg ml-2"
                                     onClick={handleUpdate}
                                 >
-                                    ارسال
+                                    به روز رسانی
                                 </button>
                                 <button
                                     type="button"

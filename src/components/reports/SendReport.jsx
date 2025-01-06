@@ -25,6 +25,7 @@ const SendReport = () => {
         { id: 3, label: "پایان" },
     ];
 
+
     const handleNextStep = async () => {
         if (currentStep === 1) {
             if (isFormValid()) {
@@ -47,18 +48,63 @@ const SendReport = () => {
                         localStorage.setItem("after_img" ,response.data.image_url)
                         localStorage.setItem("before_img" ,formData.image)
                     } else {
-                        alert("هیچ عکسی پردازش نشده");
+                        Toastify({
+                            text: "هیچ عکسی ارسال نشده",
+                            duration: 3000,
+                            // destination: "https://github.com/apvarun/toastify-js",
+                            newWindow: true,
+                            close: true,
+                            gravity: "top", // `top` or `bottom`
+                            position: "center", // `left`, `center` or `right`
+                            stopOnFocus: true, // Prevents dismissing of toast on hover
+                            style: {
+                              background: "#ff3333",
+                            },
+                          }).showToast();
                     }
                 } catch (error) {
-                    alert("مشکلی در پردازش تصویر وجود دارد");
+                    Toastify({
+                        text: "مشکلی در پردازش تصویر وجود دارد",
+                        duration: 4000,
+                        // destination: "https://github.com/apvarun/toastify-js",
+                        newWindow: true,
+                        close: true,
+                        gravity: "top", // `top` or `bottom`
+                        position: "center", // `left`, `center` or `right`
+                        stopOnFocus: true, // Prevents dismissing of toast on hover
+                        style: {
+                          background: "#ff3333",
+                        },
+                      }).showToast();
                 } finally {
                     setIsProcessing(false); // Hide the loader
                 }
+    
+                if (currentStep < steps.length) {
+                    setCurrentStep(currentStep + 1);
+                }
+            } else{
+                Toastify({
+                    text: "لطفا تمامی مقادیر را به درستی وارد کنید",
+                    duration: 3000,
+                    // destination: "https://github.com/apvarun/toastify-js",
+                    newWindow: true,
+                    close: true,
+                    gravity: "top", // `top` or `bottom`
+                    position: "center", // `left`, `center` or `right`
+                    stopOnFocus: true, // Prevents dismissing of toast on hover
+                    style: {
+                      background: "#ff3333",
+                    },
+                  }).showToast();
+                  
+            }
+        } else if(currentStep === 2){
+            if (currentStep < steps.length) {
+                setCurrentStep(currentStep + 1);
             }
         }
-        if (currentStep < steps.length) {
-            setCurrentStep(currentStep + 1);
-        }
+    
     };
 
 
@@ -177,10 +223,16 @@ const SendReport = () => {
     const stepContents = [
         // ! step 1
         (
-            <div className="w-[90%] mx-auto md:grid md:grid-cols-12">
+            <div className="w-[90%] mx-auto md:grid md:grid-cols-12 max-md:flex max-md:flex-col-reverse">
             {isProcessing ? (
                 <div className="flex justify-center items-center absolute w-[100vw] h-[100vh] bg-gray-100/70 top-0 right-0 left-0 bottom-0">
-                    <div className="loader"></div>
+                    <div role="status">
+                        <svg aria-hidden="true" class="inline w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+                            <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+                        </svg>
+                        <span class="sr-only">Loading...</span>
+                    </div>
                     <p className="mt-4 yekanBold text-center text-[18px] mx-3">در حال پردازش تصویر...</p>
                 </div>
             ) : (
@@ -191,8 +243,9 @@ const SendReport = () => {
                     <img src={uploadedImage || gray} alt="image" className="w-full" />
                     <button
                     onClick={handleNextStep}
+                    id="submitContinue"
                     className="bg-blue-500 cursor-pointer text-white py-3 rounded-lg mt-5 hover:bg-blue-400 transition duration-200 w-full yekanBlack text-[1.3rem]"
-                    disabled={!isFormValid()} // Disable if the form is not valid
+                    // disabled={!isFormValid()} // Disable if the form is not valid
                     >
                     ثبت و ادامه
                     </button>
@@ -200,10 +253,10 @@ const SendReport = () => {
 
                 {/* content and form */}
                 <div className="md:col-span-7 text-right">
-                    <h1 className="text-[3rem] yekanBlack mb-4">ارسال گزارش</h1>
+                    <h1 className="md:text-[3rem] text-[1.5rem] yekanBlack my-4 ">ارسال گزارش</h1>
                     <div className="flex flex-col gap-4" style={{ direction: "rtl" }}>
                     <div className="flex items-center gap-5">
-                        <label className="text-[1.3rem]">مختصات جغرافیایی زمین</label>
+                        <label className="md:text-[1.3rem]">مختصات جغرافیایی زمین</label>
                         <input
                         type="text"
                         className="p-4 bg-gray-100 w-[30%] mb-5 rounded-lg focus:outline-none"
@@ -211,10 +264,11 @@ const SendReport = () => {
                         name="location"
                         value={formData.location}
                         onChange={handleInputChange}
+                        required
                         />
                     </div>
                     <div className="flex items-center gap-5">
-                        <label className="text-[1.3rem]">سرعت باد</label>
+                        <label className="md:text-[1.3rem]">سرعت باد</label>
                         <input
                         type="number"
                         className="p-4 bg-gray-100 w-[30%] mb-5 rounded-lg focus:outline-none"
@@ -222,10 +276,11 @@ const SendReport = () => {
                         name="wind_speed"
                         value={formData.wind_speed}
                         onChange={handleInputChange}
+                        required
                         />
                     </div>
                     <div className="flex items-center gap-5">
-                        <label className="text-[1.3rem]">زاویه دوربین</label>
+                        <label className="md:text-[1.3rem]">زاویه دوربین</label>
                         <input
                         type="number"
                         className="p-4 bg-gray-100 w-[30%] mb-5 rounded-lg focus:outline-none"
@@ -233,6 +288,7 @@ const SendReport = () => {
                         name="camera"
                         value={formData.camera}
                         onChange={handleInputChange}
+                        required
                         />
                     </div>
                     </div>
@@ -240,11 +296,12 @@ const SendReport = () => {
                     <hr className="my-5 w-[90%] mx-auto border-gray-700 border-dotted" />
 
                     <div className="w-[90%] mx-auto">
-                    <p className="mb-3 text-[15px]">پیوست تصویر بدون پردازش</p>
+                    <p className="mb-3 md:text-[15px]">پیوست تصویر بدون پردازش</p>
                     <input
                         type="file"
                         className="p-4 bg-gray-100 w-full mb-5 rounded-lg border-0 outline-none"
                         onChange={handleImageUpload} // Handle image upload
+                        required
                     />
                     <p className="mb-3 text-[15px]">زمان ثبت تصویر</p>
                     <div className="relative">
@@ -254,6 +311,7 @@ const SendReport = () => {
                         name="date"
                         value={formData.date}
                         onChange={handleInputChange} // Handle date input change
+                        required
                         />
                         <button
                         onClick={handleTodayDate}
@@ -270,6 +328,7 @@ const SendReport = () => {
                         value={formData.title}
                         onChange={handleInputChange} // Handle title input change
                         style={{ direction: "rtl" }}
+                        required
                     />
                     </div>
                 </div>
@@ -292,7 +351,7 @@ const SendReport = () => {
                         <div>
                             <div className="md:grid md:grid-cols-2 gap-10 mb-2">
                                 <div>
-                                    <img src={imageUrl || gray} alt="Processed" />
+                                    <img src={imageUrl || uploadedImage} alt="Processed" />
                                     <p className="text-gray-700 yekanBold text-center text-[20px] mt-3">تصویر پردازش شده</p>
                                 </div>
                                 <div>
@@ -356,7 +415,7 @@ const SendReport = () => {
                 <div className="md:w-[90%] md:mx-auto p-4">
                     <div className="md:grid md:grid-cols-2 gap-10 mb-4">
                         <div>
-                            <img src={imageUrl || gray} alt="Processed" />
+                            <img src={uploadedImage || gray} alt="Processed" />
                             <p className="text-gray-700 yekanBold text-center text-[20px] mt-3">تصویر پردازش شده</p>
                         </div>
                         <div>
@@ -443,7 +502,7 @@ const SendReport = () => {
                 </div>
             </div>
             <div className="w-[80%] mx-auto flex flex-col items-center mt-5">
-                <div className="flex items-center justify-center w-full">
+                <div className="flex items-center justify-center w-full" style={{direction: "rtl"}}>
                     {steps.map((step, index) => (
                         <div
                             key={step.id}
@@ -461,7 +520,7 @@ const SendReport = () => {
                                     {step.id}
                                 </div>
                                 <span
-                                    className={`text-sm mt-2 ${
+                                    className={`text-sm mt-2 w-[60px] ${
                                         currentStep >= step.id
                                             ? "text-blue-500"
                                             : "text-gray-400"
