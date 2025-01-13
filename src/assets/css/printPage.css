@@ -1,0 +1,31 @@
+@media print {
+    body {
+        margin: .5cm; /* Standard margin for all sides */
+    }
+
+    /* .bg-black-css{
+        background-color: black;
+    } */
+
+}
+
+/* @media print {
+    body {
+        margin: 2.5cm;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        border: 1px solid black;
+        padding: 8px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+} */

@@ -6,11 +6,13 @@ import "../../assets/css/report.css"
 import { useNavigate  } from 'react-router-dom';
 import Toastify from 'toastify-js'
 import "toastify-js/src/toastify.css"
+import PrintReport from "./PrintReport";
 
 const SendReport = () => {
     const [currentStep, setCurrentStep] = useState(1);
     const [uploadedImage, setUploadedImage] = useState(null); // State to store the uploaded or processed image
     const [imageUrl, setImageUrl] = useState('');
+    const [errors, setErrors] = useState({});
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         image: null,
@@ -26,85 +28,145 @@ const SendReport = () => {
     ];
 
 
+    // const handleNextStep = async () => {
+    //     if (currentStep === 1) {
+    //         if (isFormValid()) {
+    //             setIsProcessing(true); // Show the loader while processing
+    //             try {
+    //                 const form = new FormData();
+    //                 form.append("img_input", formData.image);
+    //                 const token = localStorage.getItem("accessToken");
+    
+    //                 // Call the API
+    //                 const response = await api.post("main/proccess/", form, {
+    //                     headers: {
+    //                         "Content-Type": "multipart/form-data",
+    //                         "Authorization": `Bearer ${token}`
+    //                     },
+    //                 });
+    
+    //                 if (response.data?.image_url) {
+    //                     setImageUrl(`http://127.0.0.1:8000${response.data.image_url}`);
+    //                     localStorage.setItem("after_img" ,response.data.image_url)
+    //                     localStorage.setItem("before_img" ,formData.image)
+    //                 } else {
+    //                     Toastify({
+    //                         text: "هیچ عکسی ارسال نشده",
+    //                         duration: 3000,
+    //                         // destination: "https://github.com/apvarun/toastify-js",
+    //                         newWindow: true,
+    //                         close: true,
+    //                         gravity: "top", // `top` or `bottom`
+    //                         position: "center", // `left`, `center` or `right`
+    //                         stopOnFocus: true, // Prevents dismissing of toast on hover
+    //                         style: {
+    //                           background: "#ff3333",
+    //                         },
+    //                       }).showToast();
+    //                 }
+    //             } catch (error) {
+    //                 Toastify({
+    //                     text: "مشکلی در پردازش تصویر وجود دارد",
+    //                     duration: 4000,
+    //                     // destination: "https://github.com/apvarun/toastify-js",
+    //                     newWindow: true,
+    //                     close: true,
+    //                     gravity: "top", // `top` or `bottom`
+    //                     position: "center", // `left`, `center` or `right`
+    //                     stopOnFocus: true, // Prevents dismissing of toast on hover
+    //                     style: {
+    //                       background: "#ff3333",
+    //                     },
+    //                   }).showToast();
+    //             } finally {
+    //                 setIsProcessing(false); // Hide the loader
+    //             }
+    
+    //             if (currentStep < steps.length) {
+    //                 setCurrentStep(currentStep + 1);
+    //             }
+    //         } else{
+    //             Toastify({
+    //                 text: "لطفا تمامی مقادیر را به درستی وارد کنید",
+    //                 duration: 3000,
+    //                 // destination: "https://github.com/apvarun/toastify-js",
+    //                 newWindow: true,
+    //                 close: true,
+    //                 gravity: "top", // `top` or `bottom`
+    //                 position: "center", // `left`, `center` or `right`
+    //                 stopOnFocus: true, // Prevents dismissing of toast on hover
+    //                 style: {
+    //                   background: "#ff3333",
+    //                 },
+    //               }).showToast();
+                  
+    //         }
+    //     } else if(currentStep === 2){
+    //         if (currentStep < steps.length) {
+    //             setCurrentStep(currentStep + 1);
+    //         }
+    //     }
+    
+    // };
+
     const handleNextStep = async () => {
         if (currentStep === 1) {
-            if (isFormValid()) {
-                setIsProcessing(true); // Show the loader while processing
+            if (validateInputs()) {
+                setIsProcessing(true);
                 try {
                     const form = new FormData();
                     form.append("img_input", formData.image);
                     const token = localStorage.getItem("accessToken");
-    
-                    // Call the API
+
                     const response = await api.post("main/proccess/", form, {
                         headers: {
                             "Content-Type": "multipart/form-data",
                             "Authorization": `Bearer ${token}`
                         },
                     });
-    
+
                     if (response.data?.image_url) {
                         setImageUrl(`http://127.0.0.1:8000${response.data.image_url}`);
-                        localStorage.setItem("after_img" ,response.data.image_url)
-                        localStorage.setItem("before_img" ,formData.image)
+                        localStorage.setItem("after_img", response.data.image_url);
+                        localStorage.setItem("before_img", formData.image);
                     } else {
                         Toastify({
                             text: "هیچ عکسی ارسال نشده",
                             duration: 3000,
-                            // destination: "https://github.com/apvarun/toastify-js",
-                            newWindow: true,
-                            close: true,
-                            gravity: "top", // `top` or `bottom`
-                            position: "center", // `left`, `center` or `right`
-                            stopOnFocus: true, // Prevents dismissing of toast on hover
-                            style: {
-                              background: "#ff3333",
-                            },
-                          }).showToast();
+                            gravity: "top",
+                            position: "center",
+                            style: { background: "#ff3333" },
+                        }).showToast();
                     }
                 } catch (error) {
                     Toastify({
                         text: "مشکلی در پردازش تصویر وجود دارد",
                         duration: 4000,
-                        // destination: "https://github.com/apvarun/toastify-js",
-                        newWindow: true,
-                        close: true,
-                        gravity: "top", // `top` or `bottom`
-                        position: "center", // `left`, `center` or `right`
-                        stopOnFocus: true, // Prevents dismissing of toast on hover
-                        style: {
-                          background: "#ff3333",
-                        },
-                      }).showToast();
+                        gravity: "top",
+                        position: "center",
+                        style: { background: "#ff3333" },
+                    }).showToast();
                 } finally {
-                    setIsProcessing(false); // Hide the loader
+                    setIsProcessing(false);
                 }
-    
+
                 if (currentStep < steps.length) {
                     setCurrentStep(currentStep + 1);
                 }
-            } else{
+            } else {
                 Toastify({
                     text: "لطفا تمامی مقادیر را به درستی وارد کنید",
                     duration: 3000,
-                    // destination: "https://github.com/apvarun/toastify-js",
-                    newWindow: true,
-                    close: true,
-                    gravity: "top", // `top` or `bottom`
-                    position: "center", // `left`, `center` or `right`
-                    stopOnFocus: true, // Prevents dismissing of toast on hover
-                    style: {
-                      background: "#ff3333",
-                    },
-                  }).showToast();
-                  
+                    gravity: "top",
+                    position: "center",
+                    style: { background: "#ff3333" },
+                }).showToast();
             }
-        } else if(currentStep === 2){
+        } else if (currentStep === 2) {
             if (currentStep < steps.length) {
                 setCurrentStep(currentStep + 1);
             }
         }
-    
     };
 
 
@@ -140,6 +202,67 @@ const SendReport = () => {
         return true; // For steps 2 and 3, we assume the form is valid
     };
 
+    const validateInputs = () => {
+        let newErrors = {};
+        const locationRegex = /^\d+\.\d{1,6}\s*,\s*\d+\.\d{1,6}$/;
+
+        if (currentStep === 1) {
+            if (!formData.location || !locationRegex.test(formData.location)) {
+                newErrors.location = "فرمت مختصات جغرافیایی صحیح نیست. مثال: 35.6892, 51.3890";
+                Toastify({
+                    text: "فرمت مختصات جغرافیایی صحیح نیست",
+                    duration: 4000,
+                    gravity: "top",
+                    position: "center",
+                    style: { background: "#ff3333" },
+                }).showToast();
+            }
+            if (!formData.wind_speed || isNaN(formData.wind_speed)) {
+                newErrors.wind_speed = "سرعت باد باید یک عدد باشد.";
+                Toastify({
+                    text: "سرعت باد باید یک عدد باشد.",
+                    duration: 4000,
+                    gravity: "top",
+                    position: "center",
+                    style: { background: "#ff3333" },
+                }).showToast();
+            }
+            if (!formData.camera || isNaN(formData.camera)) {
+                newErrors.camera = "زاویه دوربین باید یک عدد باشد.";
+                Toastify({
+                    text: "زاویه دوربین باید یک عدد باشد.",
+                    duration: 4000,
+                    gravity: "top",
+                    position: "center",
+                    style: { background: "#ff3333" },
+                }).showToast();
+            }
+            if (!formData.date) {
+                newErrors.date = "تاریخ را به درستی وارد کنید";
+                Toastify({
+                    text: "زاویه دوربین باید یک عدد باشد.",
+                    duration: 4000,
+                    gravity: "top",
+                    position: "center",
+                    style: { background: "#ff3333" },
+                }).showToast();
+            }
+            if (!formData.image) {
+                newErrors.image = "عکسی آپلود نشده";
+                Toastify({
+                    text: "عکسی آپلود نشده",
+                    duration: 4000,
+                    gravity: "top",
+                    position: "center",
+                    style: { background: "#ff3333" },
+                }).showToast();
+            }
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
     // print the page
     const handlePrint = () => {
         window.print();
@@ -164,7 +287,9 @@ const SendReport = () => {
                 form.append("img_input", beforeImageFile);
             }
             if (afterImgUrl) {
-                form.append("after_img", afterImgUrl); // Append the URL
+                form.append("after_img", afterImgUrl);
+            } else{
+                form.append("after_img", beforeImageFile);
             }
             // Add other fields
             form.append("title", formData.title);
@@ -259,37 +384,40 @@ const SendReport = () => {
                         <label className="md:text-[1.3rem]">مختصات جغرافیایی زمین</label>
                         <input
                         type="text"
-                        className="p-4 bg-gray-100 w-[30%] mb-5 rounded-lg focus:outline-none"
+                        className={`input ${errors.location ? "border-red-500 border-[1px]" : ""} p-4 bg-gray-100 w-[30%] mb-5 rounded-lg focus:outline-none`}
                         placeholder="مثال: 35.6892, 51.3890"
                         name="location"
                         value={formData.location}
                         onChange={handleInputChange}
                         required
                         />
+                        {/* {errors.location && <p className="text-red-500">{errors.location}</p>} */}
                     </div>
                     <div className="flex items-center gap-5">
                         <label className="md:text-[1.3rem]">سرعت باد</label>
                         <input
                         type="number"
-                        className="p-4 bg-gray-100 w-[30%] mb-5 rounded-lg focus:outline-none"
+                        className={`input ${errors.wind_speed ? "border-red-500 border-[1px]" : ""} p-4 bg-gray-100 w-[30%] mb-5 rounded-lg focus:outline-none`}
                         placeholder="مثال: 10"
                         name="wind_speed"
                         value={formData.wind_speed}
                         onChange={handleInputChange}
                         required
                         />
+                        {/* {errors.wind_speed && <p className="text-red-500">{errors.wind_speed}</p>} */}
                     </div>
                     <div className="flex items-center gap-5">
                         <label className="md:text-[1.3rem]">زاویه دوربین</label>
                         <input
                         type="number"
-                        className="p-4 bg-gray-100 w-[30%] mb-5 rounded-lg focus:outline-none"
+                        className={`input ${errors.camera ? "border-red-500 border-[1px]" : ""} p-4 bg-gray-100 w-[30%] mb-5 rounded-lg focus:outline-none`}
                         placeholder="مثال: 45"
                         name="camera"
                         value={formData.camera}
                         onChange={handleInputChange}
                         required
                         />
+                        {/* {errors.camera && <p className="text-red-500">{errors.camera}</p>} */}
                     </div>
                     </div>
 
@@ -544,6 +672,16 @@ const SendReport = () => {
             </div>
             <div className="mt-5">
                 {stepContents[currentStep - 1]}
+            </div>
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+                <div className="bg-white p-5 w-[40%] rounded-lg" style={{direction:"rtl"}}>
+                    <p className="text-green-900 yekanBlack text-[1.2em] bg-green-300 px-3 py-2 rounded-lg">گزارش با موفقیت ثبت شد</p>
+                    <div className="mt-5">
+                        <p>گزارش شما با موفقیت ثبت شده است. در صورت تمایل میتوانید گزارش </p>
+                    </div>
+                    
+
+                </div>
             </div>
         </div>
     );

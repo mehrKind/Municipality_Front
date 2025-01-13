@@ -6,6 +6,7 @@ import { MdDeleteForever } from "react-icons/md";
 import { useNavigate  } from 'react-router-dom';
 import Toastify from 'toastify-js'
 import "toastify-js/src/toastify.css"
+import { LuPrinter } from "react-icons/lu";
 
 const AllReports = () => {
     const [data, setData] = useState([]);
@@ -257,6 +258,9 @@ const AllReports = () => {
                                                 <tr key={index} className="border-b border-dotted border-gray-300 hover:bg-gray-100 text-center">
                                                     <td className="py-3 px-6">
                                                         <div className="flex items-center space-x-2 justify-center"> 
+                                                            <button onClick={()=>{window.print();}}>
+                                                                <LuPrinter className="text-gray-500 text-[2rem]" />
+                                                            </button>
                                                             <button onClick={() => handleDelete(item)}>
                                                                 <MdDeleteForever className="text-red-500 text-[2rem]" />
                                                             </button>
